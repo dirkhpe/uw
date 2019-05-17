@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block page_content %}
+<div class="row">
+    <div class="col-md-8">
+        <h1>Indices</h1>
+            <table class="table table-hover">
+            <tr>
+            {% for key, value in reslist[0].items() %}
+                <th>{{ key }}</th>
+            {% endfor %}
+            </tr>
+            {% for row in reslist %}
+            <tr>
+                {% for key, value in row.items() %}
+                <td>{{ value }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+    </table>
+    </div>
+</div>
+{% endblock %}

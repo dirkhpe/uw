@@ -57,6 +57,7 @@ class Elastic:
         """
         url = "{url_home}/{function}/indices?v".format(url_home=self.url_elastic, function="_cat")
         res = rw.get(url, headers=self.headers)
+        print(type(res))
         return res
 
     def get_mapping(self, index):
