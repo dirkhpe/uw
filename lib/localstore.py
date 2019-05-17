@@ -13,11 +13,15 @@ class SqliteUtils:
     specific table.
     """
 
-    def __init__(self):
+    def __init__(self, dbfile=None):
         """
         To drop a database in sqlite3, you need to delete the file.
+
+        :param dbfile: Database filename to be loaded.
         """
-        self.db = os.path.join(os.getenv("DBDIR"), os.getenv("LOCALDB"))
+        if not dbfile:
+            dbfile = os.getenv("LOCALDB")
+        self.db = os.path.join(os.getenv("DBDIR"), dbfile)
         self.dbConn, self.cur = self._connect2db()
 
     def _connect2db(self):

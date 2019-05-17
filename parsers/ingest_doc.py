@@ -1,12 +1,10 @@
 """
-This script will create an new index in elasticsearch. Use script 'add_mapping.py' to add mapping.
+This script loads a document for preprocessing in Apache Tika before indexing in Elastic.
 """
-
-from lib import elasticlib
-from lib import my_env
 import argparse
 import logging
-import pprint
+from lib import elasticlib
+from lib import my_env
 
 # Configure command line arguments
 parser = argparse.ArgumentParser(
@@ -14,13 +12,10 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument('-i', '--index', type=str, required=True,
                     help='Please provide the name of the index.')
+parser.add_argument('-f', '--file', type=str, required=True,
+                    help='Please provide the file for indexing.')
 args = parser.parse_args()
 cfg = my_env.init_env("elasticload", __file__)
-pp = pprint.PrettyPrinter(indent=4)
 el = elasticlib.Elastic()
 logging.info("Arguments: {a}".format(a=args))
-
-index = args.index
-res = el.put_index(index)
-print("Create index {index}: ".format(index=index))
-pp.pprint(res.json())
+el.post_tika(args.index, args.file)

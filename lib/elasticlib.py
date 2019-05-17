@@ -3,8 +3,10 @@ The purpose of this module is to generate JSON structures for communication with
 """
 
 # import logging
+import json
 import os
 import lib.requests_wrapper as rw
+from base64 import b64encode
 
 
 class Elastic:
@@ -90,15 +92,34 @@ class Elastic:
         res = rw.post(url, headers=self.headers, data=document)
         return res
 
-    def put_index(self, index):
+    def post_tika(self, index, fn):
+        """
+        This method will parse a file with Apache Tika, then post to the index. The document ID will be calculated by
+        Elasticsearch.
+
+        :param index: Name of the index
+        :param fn: Full filename of the document to be parsed and added to the index.
+        :return:
+        """
+        fh = open(fn, mode='rb')
+        content = fh.read()
+        doc_dict = dict(data=b64encode(content).decode("utf-8"))
+        document = json.dumps(doc_dict)
+        url = "{url_home}/{index}/{function}?pipeline=attachment".format(url_home=self.url_elastic,
+                                                                         index=index, function="_doc")
+        res = rw.post(url, headers=self.headers, data=document)
+        return res
+
+    def put_index(self, index, mapping=None):
         """
         This method will create an index in elasticsearch.
 
         :param index: Name of the index
+        :param mapping: json formatted string containing mapping information (optional)
         :return:
         """
         url = "{url_home}/{index}".format(url_home=self.url_elastic, index=index)
-        res = rw.put(url, headers=self.headers)
+        res = rw.put(url, headers=self.headers, data=mapping)
         return res
 
     def put_mapping(self, index, mapping):

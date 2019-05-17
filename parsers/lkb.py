@@ -22,7 +22,7 @@ for rec in res:
 
 
 records = lcl.get_table("node")
-lc = my_env.LoopInfo("lkb Records", 20)
+lc = my_env.LoopInfo("lkb Records", 100)
 for trow in records:
     row = dict(trow)
     try:

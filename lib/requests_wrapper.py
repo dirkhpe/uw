@@ -55,6 +55,7 @@ def get(url, headers):
 def post(url, headers, **kwargs):
     """
     Issue a Post request. Input parameters are url, headers and data.
+    Post request asks to create an item in the database, so successful return is 201 (created).
 
     :param url: POST URL (mandatory)
     :param headers: headers are mandatory
@@ -62,7 +63,7 @@ def post(url, headers, **kwargs):
     :return:
     """
     r = requests.post(url, headers=headers, **kwargs)
-    if r.status_code == 200:
+    if r.status_code == 201:
         msg = "POST OK - URL: {url}, Headers: {headers}".format(url=url, headers=headers)
         logging.debug(msg)
         return r
