@@ -23,3 +23,7 @@ index = args.index
 el = elasticlib.Elastic()
 res = el.get_mapping(index)
 pp.pprint(res.json())
+
+proplist = elasticlib.map2list(res.json())
+for k, v in sorted(proplist.items()):
+    print("{}: {}".format(k, v))

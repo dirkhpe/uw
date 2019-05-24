@@ -1,12 +1,22 @@
 import os
+from config import Config
 from flask import Flask
 from flask_bootstrap import Bootstrap
-from config import Config
+from flask_login import LoginManager
+from flask_sqlalchemy import SQLAlchemy
+from gui.lib import my_env
 
 bootstrap = Bootstrap()
+db = SQLAlchemy()
+lm = LoginManager()
+lm.login_view = 'main.login'
 
-del os.environ["http_proxy"]
-del os.environ["https_proxy"]
+try:
+    del os.environ["http_proxy"]
+    del os.environ["https_proxy"]
+except KeyError:
+    pass
+
 
 def create_app(config_class=Config):
     """
@@ -20,10 +30,13 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
 
     # Configure Logger
-    # my_env.init_loghandler(__name__, app.config.get('LOGDIR'), app.config.get('LOGLEVEL'))
+    my_env.init_loghandler(__name__, app.config.get('LOGDIR'), app.config.get('LOGLEVEL'))
 
     # initialize extensions
     bootstrap.init_app(app)
+    db.init_app(app)
+    lm.init_app(app)
+    lm.login_view = 'main.login'
 
     # import blueprints
     from .main import main as main_blueprint

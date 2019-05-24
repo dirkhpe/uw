@@ -30,15 +30,16 @@ def delete(url, headers):
         return
 
 
-def get(url, headers):
+def get(url, headers, **kwargs):
     """
     Issue a Get Requests. Input parameters are url and headers for now.
 
     :param url:
     :param headers:
+    :param kwargs: additional attributes. Typically it will have a data= attribute.
     :return: Result of the GET, or HTTPError in case of status_code != 200.
     """
-    r = requests.get(url, headers=headers)
+    r = requests.get(url, headers=headers, **kwargs)
     if r.status_code == 200:
         msg = "GET OK - URL: {url}, Headers: {headers}".format(url=url, headers=headers)
         logging.debug(msg)

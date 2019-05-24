@@ -2,7 +2,7 @@
 The purpose of this module is to generate JSON structures for communication with elastic.
 """
 
-# import logging
+import logging
 import json
 import os
 import lib.requests_wrapper as rw
@@ -134,3 +134,59 @@ class Elastic:
         url = "{url_home}/{index}/{function}".format(url_home=self.url_elastic, index=index, function="_mapping")
         res = rw.put(url, headers=self.headers, data=mapping)
         return res
+
+
+propdict = {}
+
+
+def map2list(mapping):
+    """
+    This method gets a mapping dictionary and converts is to a map list. A map list lists the property names and field
+    types. See lkb for structure of the mapping file.
+
+    :param mapping: Dictionary of the index mapping.
+    :return: tuple (indexname, field list with type per field)
+    """
+    # Check on mapping dictionary, with size=1:
+    if not isinstance(mapping, dict):
+        logging.error("Mapping type not dictionary but {}".format(type(mapping)))
+        return None, None
+    if len(mapping) != 1:
+        logging.error("Mapping dictionary unexpected length {}, should be 1".format(len(mapping)))
+        return None, None
+    index = list(mapping.keys())[0]
+    props = mapping[index]['mappings']['properties']
+    itermap("", props)
+    # Remove first dot in each property name
+    propdict_clean = {}
+    for k, v in propdict.items():
+        propdict_clean[k[1:]] = v
+    return propdict_clean
+
+
+def itermap(parent, indexmap):
+    """
+    This function recursively walks through the index map to extract properties and add them to a dictionary.
+
+    :param parent: parent property of this property
+    :param indexmap: part of the index map that is analyzed.
+    :return:
+    """
+    for k, v in indexmap.items():
+        if not isinstance(v, dict):
+            logging.fatal("Property {k} description not dictionary: {v} ".format(k=k, v=v))
+            return
+        prop = "{}.{}".format(parent, k)
+        if "type" in v:
+            if "fields" in v:
+                embedded_map = v["fields"]
+                itermap(prop, embedded_map)
+                del v["fields"]
+            propdict[prop] = v
+        elif "properties" in v:
+            if len(v) != 1:
+                logging.fatal("Embedded properties of {} not in dictionary with length 1: {}".format(k, v))
+                return
+            embedded_map = v["properties"]
+            itermap(prop, embedded_map)
+    return

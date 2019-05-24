@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+
+{% block page_content %}
+
+    <h1>{{ title }}</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            <ul class="list-group">
+                {% for item in form.itemlist %}
+                <li class="list-group-item">
+                    {{ item }}
+                    {{ item.label(style="font-weight: normal;") }}
+
+                </li>
+                {% endfor %}
+            </ul>
+            {% for error in form.itemlist.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+
+{% endblock %}

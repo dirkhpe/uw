@@ -5,7 +5,14 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 {% endblock %}
 
-{% block title %}{{ 'ElasticSearch' }}{% endblock %}
+{% block title %}
+    {% if title %}
+        {{ title }}
+    {% else %}
+        Elastic
+    {% endif %}
+{% endblock %}
+
 
 {% block navbar %}
     <nav class="navbar navbar-inverse" role="navigation">
@@ -22,7 +29,21 @@
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav">
-                <li><a href="{{ url_for('main.indices') }}">Indices</a></li>
+                    <li><a href="{{ url_for('main.indices') }}">Indices</a></li>
+                    <li><a href="{{ url_for('main.select_index') }}">Search</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        {% if current_user.is_anonymous %}
+                            <a href="{{ url_for('main.login') }}">
+                                <span class="glyphicon glyphicon-log-in"></span> Login
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('main.logout') }}">
+                                <span class="glyphicon glyphicon-log-out"></span> Logout
+                            </a>
+                        {% endif %}
+                    </li>
                 </ul>
             </div>
         </div>
@@ -84,5 +105,4 @@
     </div>
 </div>
 
-</div>
 {% endblock %}

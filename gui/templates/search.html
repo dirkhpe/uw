@@ -1,0 +1,27 @@
+{% extends 'layout.html' %}
+
+{% block page_content %}
+
+<h1 xmlns="http://www.w3.org/1999/html">{{ title }}</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        some text
+        <p>
+        {% for item in form.itemlist %}
+            {{ item }} {{ item.label(style="font-weight: normal;") }}<br>
+        {% endfor %}
+        {% for error in form.itemlist.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+        </p>
+        <p>
+            {{ form.term.label }}:
+            {{ form.term(size=32) }}<br>
+            {% for error in form.term.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+
+{% endblock %}
